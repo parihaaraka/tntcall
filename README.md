@@ -2,25 +2,27 @@
 
 ### Usage
 
-&nbsp;&nbsp;&nbsp;&nbsp;`tntcall <tarantool_connection_string> <function_name> [ARG][, ARG]...`
-
-&nbsp;&nbsp;&nbsp;&nbsp;`tntcall <tarantool_connection_string> -e <script_to_eval> [ARG][, ARG]...`
-
-&nbsp;&nbsp;&nbsp;&nbsp;`tntcall <tarantool_connection_string> -f <file_to_eval> [ARG][, ARG]...`
+`    tntcall <connection_string> <function_name> [ARG|SEP][, ARG|SEP]...`<br/>
+`    tntcall <connection_string> -e <script_to_eval> [ARG|SEP][, ARG|SEP]...`<br/>
+`    tntcall <connection_string> -f <file_to_eval> [ARG|SEP][, ARG|SEP]...`<br/>
 
 ARG
 
-&nbsp;&nbsp;&nbsp;&nbsp;`-n|[-i ]<arg>`
+`    -n`         nil<br/>
+`    [-i ]<arg>` integer(-i) or string &lt;arg&gt;<br/>
 
-&nbsp;&nbsp;&nbsp;&nbsp; where
+SEP
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-i`  Pass `<arg>` as integer
+`    -A`         begin array<br/>
+`    -a`         end array<br/>
+`    -M`         begin map<br/>
+`    -m`         end map<br/>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`-n`  Pass `nil`
+Outputs json-like formatted data by means of [msgpuck](https://github.com/tarantool/msgpuck)'s mp_snprint().
+You may try to use [jq](https://tracker.debian.org/pkg/jq) to deal with
+the output.
 
-Outputs json-like formatted data (you may try to use [jq](https://github.com/stedolan/jq) to deal with it).
-
-### Example
+### Examples
 
 ```
 $ ./tntcall 'user:pass@127.0.0.1:3301' -e 'local a,b = ...; return a+b, a-b, {ok=true}' -i 3 -i 2
@@ -34,4 +36,9 @@ $ ./tntcall 'user:pass@127.0.0.1:3301' os.date '%A %B %d'
 
 $ ./tntcall 'user:pass@127.0.0.1:3301' -e 'return ...' -i 123
 >123
+
+$ ./tntcall 'user:pass@127.0.0.1:3301' box.cfg -M memtx_memory -i 2147483648 -m
+>
+$ ./tntcall 'user:pass@127.0.0.1:3301' -e 'return box.cfg.memtx_memory'
+> 2147483648
 ```
