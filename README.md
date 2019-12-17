@@ -22,20 +22,23 @@ Outputs json-like formatted data by means of [msgpuck](https://github.com/tarant
 You may try to use [jq](https://tracker.debian.org/pkg/jq) to deal with
 the output.
 
+Besides connection string format described [here](https://www.tarantool.io/en/doc/2.2/reference/configuration/#uri)
+there is another option: `env/:<environment_variable_name>`.
+
 ### Examples
 
 ```
 $ ./tntcall 'user:pass@127.0.0.1:3301' -e 'local a,b = ...; return a+b, a-b, {ok=true}' -i 3 -i 2
->[5, 1, {"ok": true}]
+> [5, 1, {"ok": true}]
 
-$ ./tntcall 'user:pass@127.0.0.1:3301' -e 'return table.concat({...})' hello \ word
->"hello word"
+$ ./tntcall 'user:pass@127.0.0.1:3301' -e 'return table.concat({...})' hello \ world
+> "hello world"
 
 $ ./tntcall 'user:pass@127.0.0.1:3301' os.date '%A %B %d'
->"Friday November 29"
+> "Friday November 29"
 
 $ ./tntcall 'user:pass@127.0.0.1:3301' -e 'return ...' -i 123
->123
+> 123
 
 $ ./tntcall 'user:pass@127.0.0.1:3301' box.cfg -M memtx_memory -i 2147483648 -m
 >

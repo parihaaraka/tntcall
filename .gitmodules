@@ -1,3 +1,4 @@
 [submodule "third_party/cpp2tnt"]
 	path = third_party/cpp2tnt
 	url = https://github.com/parihaaraka/cpp2tnt.git
+	branch = master
