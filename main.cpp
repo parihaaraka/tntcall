@@ -148,8 +148,8 @@ Examples:
         try
         {
             mp_reader r = bunch.iproto_message();
-            auto encoded_header = r.map();
-            auto encoded_body = r.map();
+            auto encoded_header = r.read<mp_map_reader>();
+            auto encoded_body = r.read<mp_map_reader>();
             encoded_header[tnt::header_field::CODE] >> retcode;
             if (retcode)
             {
@@ -161,7 +161,7 @@ Examples:
             {
                 auto response = encoded_body[tnt::response_field::DATA];
                 auto tmp = response;
-                auto inner_array = response.array();
+                auto inner_array = response.read<mp_array_reader>();
                 if (inner_array.cardinality() == 1)
                     cout << inner_array.to_string();
                 else if (inner_array.cardinality() > 1)
