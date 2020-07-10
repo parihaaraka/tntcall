@@ -154,7 +154,7 @@ Examples:
             if (retcode)
             {
                 retcode &= 0x7fff;
-                cerr << encoded_body[tnt::response_field::ERROR].to_string() << endl
+                cerr << encoded_body[tnt::response_field::ERROR].read<string>() << endl
                      << "code " << retcode << endl << flush;
             }
             else
@@ -163,7 +163,18 @@ Examples:
                 auto tmp = response;
                 auto inner_array = response.read<mp_array_reader>();
                 if (inner_array.cardinality() == 1)
-                    cout << inner_array.to_string();
+                {
+                    try
+                    {
+                        // try string first (avoid include msgpuck and check type)
+                        cout << inner_array.read<string>();
+                    }
+                    catch(...)
+                    {
+                        // failover to json-like output
+                        cout << inner_array.to_string();
+                    }
+                }
                 else if (inner_array.cardinality() > 1)
                     cout << tmp.to_string();
             }
