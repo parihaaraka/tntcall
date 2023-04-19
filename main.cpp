@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ev.h>
 #include <fstream>
+#include <sys/resource.h>
 
 #include "cpp2tnt/connection.h"
 #include "cpp2tnt/proto.h"
@@ -13,6 +14,11 @@ static int retcode = 0;
 
 int main(int argc, char *argv[])
 {
+	struct rlimit core_limit {RLIM_INFINITY, RLIM_INFINITY};
+	if (setrlimit(RLIMIT_CORE, &core_limit) < 0)
+		cerr << "setrlimit error " << strerror(errno)
+				  << " - core dumps may be truncated or lost" << endl;
+
     if (argc < 3)
     {
         cerr << R"(
@@ -70,7 +76,7 @@ Examples:
     {
         try
         {
-            iproto_writer w(cn);
+			iproto_client w(cn);
             string script;
             uint32_t ind = 3; // index of next argument to pass to tnt
             if (argc > 3)
@@ -188,7 +194,7 @@ Examples:
         ev_break(EV_DEFAULT);
     });
 
-    ev4cpp2tnt ev_wrapper;
+	ev4cpp2tnt ev_wrapper(EV_DEFAULT);
     ev_wrapper.take_care(&cn);
     cn.set_connection_string(argv[1]);
     cn.open();
